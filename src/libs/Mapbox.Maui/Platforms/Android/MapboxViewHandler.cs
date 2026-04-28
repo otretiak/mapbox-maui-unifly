@@ -267,6 +267,16 @@ public partial class MapboxViewHandler
         if (mapboxFragment != null)
         {
             UnregisterEvents(mapboxFragment);
+
+            var mainActivity = Context.GetActivity() as MauiAppCompatActivity;
+            if (mainActivity is { IsDestroyed: false, IsFinishing: false })
+            {
+                mainActivity.SupportFragmentManager
+                    .BeginTransaction()
+                    .Remove(mapboxFragment)
+                    .CommitAllowingStateLoss();
+            }
+
             mapboxFragment.Dispose();
             mapboxFragment = null;
         }
