@@ -4,7 +4,7 @@
   <Import Condition="EXISTS('MapboxMauiQs.targets')"
           Project="MapboxMauiQs.targets" />
   <PropertyGroup>
-    <TargetFrameworks>net8.0-android;net8.0-ios;</TargetFrameworks>
+    <TargetFrameworks>net9.0-android;net9.0-ios;</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <RootNamespace>MapboxMauiQs</RootNamespace>
     <UseMaui>true</UseMaui>
@@ -28,10 +28,10 @@
     <AssemblyName>$(MSBuildProjectName)</AssemblyName>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-ios|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-ios|AnyCPU'">
     <CreatePackage>false</CreatePackage>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-ios|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-ios|AnyCPU'">
     <CreatePackage>false</CreatePackage>
   </PropertyGroup>
   <ItemGroup>
@@ -80,7 +80,7 @@
   </ItemGroup>
 
   <!-- Both iOS and Mac Catalyst -->
-  <ItemGroup Condition="$(TargetFramework.StartsWith('net8.0-ios')) != true AND $(TargetFramework.StartsWith('net8.0-maccatalyst')) != true">
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net9.0-ios')) != true AND $(TargetFramework.StartsWith('net9.0-maccatalyst')) != true">
     <Compile Remove="**\**\*.MaciOS.cs" />
     <None Include="**\**\*.MaciOS.cs"
           Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
@@ -97,9 +97,9 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Maui.Controls"
-                      Version="8.0.100" />
+                      Version="9.0.120" />
     <PackageReference Update="Microsoft.Maui.Controls.Compatibility"
-                      Version="8.0.100" />
+                      Version="9.0.120" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug"
                       Version="9.0.0" />
     <PackageReference Include="Xamarin.Build.Download"
@@ -136,7 +136,7 @@
     <CodesignKey>Apple Development: Created via API (X3MP9CYJPQ)</CodesignKey>
     <CodesignProvision>VS: WildCard Development</CodesignProvision>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)'=='net8.0-ios'">
+  <PropertyGroup Condition="'$(TargetFramework)'=='net9.0-ios'">
     <CodesignKey>Apple Development: Created via API (X3MP9CYJPQ)</CodesignKey>
     <CodesignProvision>VS: WildCard Development</CodesignProvision>
   </PropertyGroup>

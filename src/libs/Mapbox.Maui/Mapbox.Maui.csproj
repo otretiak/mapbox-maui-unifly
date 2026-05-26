@@ -10,7 +10,7 @@
   </Target>
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net8.0-android;net8.0-ios;</TargetFrameworks>
+    <TargetFrameworks>net9.0;net9.0-android;net9.0-ios;</TargetFrameworks>
     <UseMaui>true</UseMaui>
     <SingleProject>true</SingleProject>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -119,7 +119,7 @@
     <PackageReference Update="Xamarin.AndroidX.Fragment"
                       Version="1.8.5.1" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0-android'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
     <PackageReference Include="Com.Mapbox.Maps.AndroidNdk27" Version="11.15.2" />
   </ItemGroup>
   <ProjectExtensions>
