@@ -4,7 +4,7 @@
   <Import Condition="EXISTS('MapboxMauiQs.targets')"
           Project="MapboxMauiQs.targets" />
   <PropertyGroup>
-    <TargetFrameworks>net9.0-android;net9.0-ios;</TargetFrameworks>
+    <TargetFrameworks>net10.0-android;net10.0-ios;</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <RootNamespace>MapboxMauiQs</RootNamespace>
     <UseMaui>true</UseMaui>
@@ -28,10 +28,10 @@
     <AssemblyName>$(MSBuildProjectName)</AssemblyName>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-ios|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-ios|AnyCPU'">
     <CreatePackage>false</CreatePackage>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-ios|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net10.0-ios|AnyCPU'">
     <CreatePackage>false</CreatePackage>
   </PropertyGroup>
   <ItemGroup>
@@ -73,14 +73,14 @@
   </ItemGroup>
 
   <!-- Android -->
-  <ItemGroup Condition="$(TargetFramework.StartsWith('net9.0-android')) != true">
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net10.0-android')) != true">
     <Compile Remove="**\**\*.Android.cs" />
     <None Include="**\**\*.Android.cs"
           Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
   </ItemGroup>
 
   <!-- Both iOS and Mac Catalyst -->
-  <ItemGroup Condition="$(TargetFramework.StartsWith('net9.0-ios')) != true AND $(TargetFramework.StartsWith('net9.0-maccatalyst')) != true">
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net10.0-ios')) != true AND $(TargetFramework.StartsWith('net10.0-maccatalyst')) != true">
     <Compile Remove="**\**\*.MaciOS.cs" />
     <None Include="**\**\*.MaciOS.cs"
           Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
@@ -96,10 +96,9 @@
     <None Remove="Resources\Images\ic_taxi_top.png" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Maui.Controls"
-                      Version="9.0.120" />
+    <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.70" />
     <PackageReference Update="Microsoft.Maui.Controls.Compatibility"
-                      Version="9.0.120" />
+                      Version="10.0.70" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug"
                       Version="9.0.0" />
     <PackageReference Include="Xamarin.Build.Download"
@@ -109,11 +108,12 @@
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
-      <PackageReference Include="Com.Mapbox.Maps.AndroidNdk27" Version="11.15.2" />
-      <PackageReference Include="Xamarin.AndroidX.Collection.Ktx" Version="1.5.0.3" />
-      <PackageReference Include="Xamarin.AndroidX.Activity.Ktx" Version="1.10.1.1" />
-      <PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData.Core.Ktx" Version="2.9.2.1" />
-      <PackageReference Include="Xamarin.AndroidX.SavedState.SavedState.Ktx" Version="1.3.1.1" />
+    <PackageReference Include="Bindings.Mapbox.Maps.AndroidNdk27" Version="11.23.0.2" />
+    <PackageReference Include="Xamarin.AndroidX.Collection.Ktx" Version="1.6.0" />
+    <PackageReference Include="Xamarin.AndroidX.Activity.Ktx" Version="1.13.0" />
+    <PackageReference Include="Xamarin.AndroidX.Lifecycle.LiveData.Core.Ktx" Version="2.10.0.2" />
+    <PackageReference Include="Xamarin.AndroidX.SavedState.SavedState.Ktx" Version="1.4.0.2" />
+    <PackageReference Include="Square.OkIO" Version="3.4.0" />
     <Compile Include="..\..\libs\Mapbox.Maui\Platforms\Android\**\**\*.cs">
       <Link>Platforms\Android\Shared\%(RecursiveDir)%(Filename)%(Extension)</Link>
     </Compile>
