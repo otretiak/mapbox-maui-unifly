@@ -165,6 +165,8 @@ public partial class MapboxViewHandler
                     style.AddStyleSource(source.Id, source.ToPlatformValue());
                 }
 
+                if (!handler.styleObjects.MarkDataApplied(source.Id, geojsonSource.Data) && sourceExists) continue;
+
                 HandleGeoJSONSourceChanged(style, source.Id, geojsonSource.Data);
                 continue;
             }

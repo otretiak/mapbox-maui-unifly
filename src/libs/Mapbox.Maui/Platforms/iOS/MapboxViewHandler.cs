@@ -196,6 +196,8 @@ public partial class MapboxViewHandler
 
             if (source is GeoJSONSource geojsonSource)
             {
+                if (!handler.styleObjects.MarkDataApplied(source.Id, geojsonSource.Data) && sourceExists) continue;
+
                 HandleGeoJSONSource(style, source.Id, platformValue, geojsonSource.Data);
                 continue;
             }

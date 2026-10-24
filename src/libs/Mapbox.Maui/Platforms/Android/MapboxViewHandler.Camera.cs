@@ -64,7 +64,7 @@ partial class MapboxViewHandler : ICameraPlugin
 
         if (mapView is null) return;
 
-        CameraAnimationsUtils.GetCamera(mapView).CancelAllAnimators(null);
+        CameraAnimationsUtils.GetCamera(mapView).CancelAllAnimators(new List<string>());
     }
 
     private class XAnimationListener : Java.Lang.Object, Android.Animation.Animator.IAnimatorListener

@@ -19,8 +19,8 @@
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">26.0</SupportedOSPlatformVersion>
     <RootNamespace>MapboxMaui</RootNamespace>
     <MauiVersion>10.0.71</MauiVersion>
-    <MapboxMauiVersion>11.23.0-unifly.1</MapboxMauiVersion>
-    <MapboxAndroidBindingsVersion>11.23.0.2</MapboxAndroidBindingsVersion>
+    <MapboxMauiVersion>11.33.0-unifly.1</MapboxMauiVersion>
+    <MapboxAndroidBindingsVersion>11.33.0.1-unifly</MapboxAndroidBindingsVersion>
     <MapboxIosBindingsVersion>11.23.0.2</MapboxIosBindingsVersion>
     <SkipValidateMauiImplicitPackageReferences>true</SkipValidateMauiImplicitPackageReferences>
   </PropertyGroup>
@@ -119,7 +119,7 @@
                       Version="1.8.5.1" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net10.0-android'">
-    <PackageReference Include="Square.OkIO" Version="3.4.0" />
+    <PackageReference Include="Square.OkIO" Version="3.5.0" />
     <PackageReference Include="Bindings.Mapbox.Maps.AndroidNdk27" Version="$(MapboxAndroidBindingsVersion)" />
   </ItemGroup>
   <ProjectExtensions>

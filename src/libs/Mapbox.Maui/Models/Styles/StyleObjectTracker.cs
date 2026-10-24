@@ -7,6 +7,23 @@ internal sealed class StyleObjectTracker
 {
     private readonly Dictionary<string, string> layerSources = new();
     private readonly HashSet<string> sourceIds = new();
+    private readonly Dictionary<string, object> sourceData = new();
+
+    /// False when <paramref name="data"/> is the very instance last pushed to <paramref name="sourceId"/>,
+    /// so an unchanged GeoJSON payload is not serialized and parsed again on every redraw.
+    public bool MarkDataApplied(string sourceId, object data)
+    {
+        if (data is not null
+            && sourceData.TryGetValue(sourceId, out var applied)
+            && ReferenceEquals(applied, data))
+        {
+            return false;
+        }
+
+        sourceData[sourceId] = data;
+
+        return true;
+    }
 
     /// Records the new layer set and returns the ids of tracked layers missing from it.
     public IReadOnlyList<string> ReplaceLayers(IEnumerable<MapboxLayer> layers)
@@ -48,6 +65,11 @@ internal sealed class StyleObjectTracker
             layerSources.Remove(layerId);
         }
 
+        foreach (var sourceId in staleSources)
+        {
+            sourceData.Remove(sourceId);
+        }
+
         sourceIds.Clear();
         sourceIds.UnionWith(next);
 
@@ -59,5 +81,6 @@ internal sealed class StyleObjectTracker
     {
         layerSources.Clear();
         sourceIds.Clear();
+        sourceData.Clear();
     }
 }
