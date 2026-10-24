@@ -38,6 +38,9 @@ internal sealed class StyleObjectTracker
         return true;
     }
 
+    /// The native write of <paramref name="layerId"/> failed; the next update must write it again.
+    public void ForgetLayer(string layerId) => layerSignatures.Remove(layerId);
+
     /// Records the new layer set and returns the ids of tracked layers missing from it.
     public IReadOnlyList<string> ReplaceLayers(IEnumerable<MapboxLayer> layers)
     {

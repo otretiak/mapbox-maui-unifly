@@ -80,7 +80,12 @@ public partial class MapboxViewHandler
 
             if (exists)
             {
-                mapView.MapboxMap.Style.SetStyleLayerProperties(layer.Id, value);
+                var setResult = mapView.MapboxMap.Style.SetStyleLayerProperties(layer.Id, value);
+                if (setResult.IsError)
+                {
+                    handler.styleObjects.ForgetLayer(layer.Id);
+                    System.Diagnostics.Debug.WriteLine(setResult.Error);
+                }
 
                 continue;
             }
@@ -248,7 +253,7 @@ public partial class MapboxViewHandler
         mapView.MapboxMap.SetCamera(cameraOptions);
 
         // The first style load replaces the camera with the style's default one; re-applied in HandleStyleLoaded.
-        handler.cameraBeforeStyleLoaded = mapView.MapboxMap.Style is null ? cameraOptions : null;
+        handler.cameraBeforeStyleLoaded = handler.isFirstStyleLoaded ? null : cameraOptions;
     }
 
     private static void HandleDebugOptionsChanged(MapboxViewHandler handler, IMapboxView view)
@@ -298,6 +303,7 @@ public partial class MapboxViewHandler
     }
 
     private Com.Mapbox.Maps.CameraOptions cameraBeforeStyleLoaded;
+    private bool isFirstStyleLoaded;
 
     public MapView NativeMapView => mapboxFragment?.MapView;
 
@@ -312,6 +318,8 @@ public partial class MapboxViewHandler
             Id = Android.Views.View.GenerateViewId(),
         };
         mapboxFragment = new MapboxFragment();
+        isFirstStyleLoaded = false;
+        cameraBeforeStyleLoaded = null;
         var args = new Bundle();
         args.PutParcelable(
             nameof(CameraOptions),

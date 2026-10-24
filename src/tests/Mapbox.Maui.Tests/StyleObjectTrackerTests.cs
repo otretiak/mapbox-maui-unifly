@@ -152,6 +152,59 @@ public class StyleObjectTrackerTests
         });
     }
 
+    [Test]
+    public void MarkLayerApplied_ChangedTransition_IsApplied()
+    {
+        var tracker = new StyleObjectTracker();
+        var first = Fill("a", 0.5);
+        first.FillOpacityTransition = new MapboxMaui.PropertyValue<StyleTransition>(new StyleTransition(300, 0));
+        tracker.MarkLayerApplied(first);
+
+        var second = Fill("a", 0.5);
+        second.FillOpacityTransition = new MapboxMaui.PropertyValue<StyleTransition>(new StyleTransition(600, 0));
+
+        Assert.That(tracker.MarkLayerApplied(second), Is.True);
+    }
+
+    [Test]
+    public void MarkLayerApplied_StringThatLooksLikeAList_DoesNotCollideWithTheList()
+    {
+        var tracker = new StyleObjectTracker();
+        var list = Fill("a", 0.5);
+        list.Filter = MapboxMaui.Expressions.DslExpression.Eq("a", "b");
+        tracker.MarkLayerApplied(list);
+
+        var text = Fill("a", 0.5);
+        text.Filter = MapboxMaui.Expressions.DslExpression.Eq("a\",\"b");
+
+        Assert.That(tracker.MarkLayerApplied(text), Is.True);
+    }
+
+    [Test]
+    public void MarkLayerApplied_SubByteColorChange_IsApplied()
+    {
+        var tracker = new StyleObjectTracker();
+        var first = Fill("a", 0.5);
+        first.FillColor = new MapboxMaui.PropertyValue<Color>(new Color(0.5f, 0.5f, 0.5f));
+        tracker.MarkLayerApplied(first);
+
+        var second = Fill("a", 0.5);
+        second.FillColor = new MapboxMaui.PropertyValue<Color>(new Color(0.501f, 0.5f, 0.5f));
+
+        Assert.That(tracker.MarkLayerApplied(second), Is.True);
+    }
+
+    [Test]
+    public void ForgetLayer_FailedWrite_IsAppliedAgainWithTheSameProperties()
+    {
+        var tracker = new StyleObjectTracker();
+        tracker.MarkLayerApplied(Fill("a", 0.5));
+
+        tracker.ForgetLayer("a");
+
+        Assert.That(tracker.MarkLayerApplied(Fill("a", 0.5)), Is.True);
+    }
+
     private static FillLayer Fill(string id, double opacity) => new(id, "s1")
     {
         FillOpacity = new MapboxMaui.PropertyValue<double>(opacity),

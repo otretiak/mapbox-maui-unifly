@@ -138,6 +138,7 @@ public partial class MapboxViewHandler
                     {
                         if (error == null) return;
 
+                        handler.styleObjects.ForgetLayer(layer.Id);
                         System.Diagnostics.Debug.WriteLine(error.LocalizedDescription);
                     });
 

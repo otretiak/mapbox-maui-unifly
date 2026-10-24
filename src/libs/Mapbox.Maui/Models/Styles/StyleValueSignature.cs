@@ -25,13 +25,13 @@ internal static class StyleValueSignature
                 builder.Append("null");
                 break;
             case string text:
-                builder.Append('"').Append(text).Append('"');
+                AppendQuoted(builder, text);
                 break;
             case bool flag:
                 builder.Append(flag ? "true" : "false");
                 break;
             case INamedString named:
-                builder.Append('"').Append(named.Value).Append('"');
+                AppendQuoted(builder, named.Value);
                 break;
             case IPropertyValue propertyValue:
                 Append(builder, propertyValue.Value);
@@ -40,7 +40,11 @@ internal static class StyleValueSignature
                 Append(builder, expression.ToObjects());
                 break;
             case Color color:
-                builder.Append(color.ToRgbaHex(true));
+                builder.Append("rgba(")
+                    .Append(color.Red.ToString("R", CultureInfo.InvariantCulture)).Append(',')
+                    .Append(color.Green.ToString("R", CultureInfo.InvariantCulture)).Append(',')
+                    .Append(color.Blue.ToString("R", CultureInfo.InvariantCulture)).Append(',')
+                    .Append(color.Alpha.ToString("R", CultureInfo.InvariantCulture)).Append(')');
                 break;
             case Enum enumValue:
                 builder.Append(enumValue.ToString());
@@ -58,11 +62,15 @@ internal static class StyleValueSignature
                 builder.Append('{');
                 foreach (var key in dictionary.Keys.Cast<object>().OrderBy(key => key.ToString(), StringComparer.Ordinal))
                 {
-                    builder.Append(key).Append(':');
+                    AppendQuoted(builder, key.ToString());
+                    builder.Append(':');
                     Append(builder, dictionary[key]);
                     builder.Append(',');
                 }
                 builder.Append('}');
+                break;
+            case BaseKVContainer container:
+                Append(builder, container.Properties);
                 break;
             case IEnumerable items:
                 builder.Append('[');
@@ -77,5 +85,10 @@ internal static class StyleValueSignature
                 builder.Append(value.GetType().Name).Append('(').Append(value).Append(')');
                 break;
         }
+    }
+
+    private static void AppendQuoted(StringBuilder builder, string text)
+    {
+        builder.Append('"').Append(text?.Replace("\\", "\\\\").Replace("\"", "\\\"")).Append('"');
     }
 }

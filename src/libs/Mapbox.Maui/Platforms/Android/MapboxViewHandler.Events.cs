@@ -89,6 +89,8 @@ public partial class MapboxViewHandler
             view.MapboxMap.SetCamera(camera);
         }
 
+        isFirstStyleLoaded = true;
+
         styleObjects.Reset();
         (VirtualView as MapboxView)?.InvokeStyleLoaded();
     }
