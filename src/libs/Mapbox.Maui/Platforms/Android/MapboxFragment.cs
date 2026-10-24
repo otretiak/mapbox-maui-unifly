@@ -60,23 +60,23 @@ public partial class MapboxFragment : Fragment
             MapboxOptions.AccessToken = MapboxViewHandler.ACCESS_TOKEN;
         }
 
-        MapView = new MapView(Context);
-
         var cameraOptionsParcelable = Arguments?
             .GetParcelable(nameof(IMapboxView.CameraOptions))
             as CameraOptionsParcelable;
-        if (cameraOptionsParcelable is not null)
-        {
-            var cameraOptions = cameraOptionsParcelable.CameraOptions.ToNative();
-            MapView.MapboxMap.SetCamera(cameraOptions);
-        }
-        
         var styleUri = Arguments?
             .GetString(nameof(IMapboxView.MapboxStyle));
-        if (!string.IsNullOrWhiteSpace(styleUri))
-        {
-            MapView.MapboxMap.LoadStyle(styleUri);
-        }
+
+        // Camera and style go in through MapInitOptions: a camera set before the first style load is
+        // replaced by the style's default camera, and a bare MapView first loads the Standard style.
+        var mapInitOptions = new MapInitOptions(
+            Context,
+            MapInitOptions.CompanionField.GetDefaultMapOptions(Context),
+            MapInitOptions.CompanionField.DefaultPluginList,
+            cameraOptionsParcelable?.CameraOptions.ToNative(),
+            false,
+            string.IsNullOrWhiteSpace(styleUri) ? Com.Mapbox.Maps.Style.Standard : styleUri);
+
+        MapView = new MapView(Context, mapInitOptions);
 
         return MapView;
     }

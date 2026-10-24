@@ -231,7 +231,14 @@ public partial class MapboxViewHandler
     private static void HandleCameraOptionsChanged(MapboxViewHandler handler, IMapboxView view)
     {
         var mapView = handler.GetMapView();
-        if (mapView is null) return;
+        if (mapView is null)
+        {
+            // The fragment has not created its MapView yet; it reads its initial camera from the arguments.
+            handler.mapboxFragment?.Arguments?.PutParcelable(
+                nameof(CameraOptions),
+                new CameraOptionsParcelable(view.CameraOptions));
+            return;
+        }
 
         var cameraOptions = view.CameraOptions.ToNative();
 
@@ -265,14 +272,23 @@ public partial class MapboxViewHandler
 
     private static void HandleMapboxStyleChanged(MapboxViewHandler handler, IMapboxView view)
     {
-        var styleUri = view.MapboxStyle.ToNative();
+        var styleUri = ToStyleUri(view.MapboxStyle);
+        var mapView = handler.GetMapView();
 
-        if (string.IsNullOrWhiteSpace(styleUri))
+        if (mapView is null)
         {
-            styleUri = MapboxMapsStyle.MapboxStreets;
+            handler.mapboxFragment?.Arguments?.PutString(nameof(MapboxView.MapboxStyle), styleUri);
+            return;
         }
 
-        handler.GetMapView()?.MapboxMap.LoadStyle(styleUri);
+        mapView.MapboxMap.LoadStyle(styleUri);
+    }
+
+    private static string ToStyleUri(MapboxStyle mapboxStyle)
+    {
+        var styleUri = mapboxStyle.ToNative();
+
+        return string.IsNullOrWhiteSpace(styleUri) ? MapboxMapsStyle.MapboxStreets : styleUri;
     }
 
     public MapView NativeMapView => mapboxFragment?.MapView;
@@ -292,6 +308,7 @@ public partial class MapboxViewHandler
         args.PutParcelable(
             nameof(CameraOptions),
             new CameraOptionsParcelable(VirtualView.CameraOptions));
+        args.PutString(nameof(MapboxView.MapboxStyle), ToStyleUri(VirtualView.MapboxStyle));
         mapboxFragment.Arguments = args;
 
         //Commented to avoid an issue with classic MAUI navigation, when we open page B and come back to page A with a mapbox
