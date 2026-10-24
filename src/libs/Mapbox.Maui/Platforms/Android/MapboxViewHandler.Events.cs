@@ -29,9 +29,9 @@ public partial class MapboxViewHandler
         mapboxFragment.MapLongClicked += HandleMapLongClicked;
         mapboxFragment.StyleLoaded += HandleStyleLoaded;
         mapboxFragment.ViewportStatusChanged += HandleViewportStatusChanged;
-        mapboxFragment.Rotating -= HandleRotating;
-        mapboxFragment.RotatingBegan -= HandleRotatingBegan;
-        mapboxFragment.RotatingEnded -= HandleRotatingEnded;
+        mapboxFragment.Rotating += HandleRotating;
+        mapboxFragment.RotatingBegan += HandleRotatingBegan;
+        mapboxFragment.RotatingEnded += HandleRotatingEnded;
     }
 
     private void UnregisterEvents(MapboxFragment mapboxFragment)

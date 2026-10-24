@@ -34,6 +34,8 @@ public partial class MapboxFragment : Fragment
 
     public MapView MapView { get; private set; }
 
+    private XViewportStatusObserver viewportStatusObserver;
+
     public MapboxFragment() : base()
     {
 
@@ -107,7 +109,8 @@ public partial class MapboxFragment : Fragment
         GesturesUtils.AddOnMapLongClickListener(MapView.MapboxMap, this);
         GesturesUtils.AddOnRotateListener(MapView.MapboxMap, this);
 
-        ViewportUtils.GetViewport(MapView).AddStatusObserver(new XViewportStatusObserver(ViewportStatusChanged));
+        viewportStatusObserver = new XViewportStatusObserver(ViewportStatusChanged);
+        ViewportUtils.GetViewport(MapView).AddStatusObserver(viewportStatusObserver);
     }
 
     public override void OnStart()
@@ -136,10 +139,15 @@ public partial class MapboxFragment : Fragment
 
     protected override void Dispose(bool disposing)
     {
-        base.Dispose(disposing);
-
         if (disposing)
         {
+            if (viewportStatusObserver != null && MapView != null)
+            {
+                ViewportUtils.GetViewport(MapView).RemoveStatusObserver(viewportStatusObserver);
+                viewportStatusObserver.Dispose();
+                viewportStatusObserver = null;
+            }
+
             foreach (var cancelable in cancelables)
             {
                 cancelable.Dispose();
@@ -157,6 +165,8 @@ public partial class MapboxFragment : Fragment
 
             MapView?.Dispose();
         }
+
+        base.Dispose(disposing);
     }
 
     private IList<Com.Mapbox.Common.ICancelable> cancelables = new List<Com.Mapbox.Common.ICancelable>();
