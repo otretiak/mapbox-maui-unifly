@@ -20,7 +20,7 @@ public class MapViewContainer : UIView
             MapboxCommon.MBXMapboxOptions.SetAccessTokenForToken(accessToken);
         }
 
-        var mapboxOptions = new MBMMapOptions(null, null, null, null, null, null, null);
+        var mapboxOptions = new MBMMapOptions(null, null, null, null, null, null, null, null);
         var xcameraOptions = cameraOptions?.ToNative();
         var styleUri = mapboxStyle.ToNative();
         var options = MapInitOptionsFactory

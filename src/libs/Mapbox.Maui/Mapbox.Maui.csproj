@@ -19,9 +19,9 @@
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">26.0</SupportedOSPlatformVersion>
     <RootNamespace>MapboxMaui</RootNamespace>
     <MauiVersion>10.0.71</MauiVersion>
-    <MapboxMauiVersion>11.33.0-unifly.3</MapboxMauiVersion>
+    <MapboxMauiVersion>11.33.0-unifly.4</MapboxMauiVersion>
     <MapboxAndroidBindingsVersion>11.33.0.1-unifly</MapboxAndroidBindingsVersion>
-    <MapboxIosBindingsVersion>11.23.0.2</MapboxIosBindingsVersion>
+    <MapboxIosBindingsVersion>11.33.0.1-unifly</MapboxIosBindingsVersion>
     <SkipValidateMauiImplicitPackageReferences>true</SkipValidateMauiImplicitPackageReferences>
   </PropertyGroup>
 
