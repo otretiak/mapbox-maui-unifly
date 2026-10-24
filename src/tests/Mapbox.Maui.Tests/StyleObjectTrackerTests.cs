@@ -88,4 +88,73 @@ public class StyleObjectTrackerTests
 
         Assert.That(tracker.MarkDataApplied("s1", null), Is.True);
     }
+
+    [Test]
+    public void MarkLayerApplied_EqualPropertiesOnANewInstance_AreSkipped()
+    {
+        var tracker = new StyleObjectTracker();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(tracker.MarkLayerApplied(Fill("a", 0.5)), Is.True);
+            Assert.That(tracker.MarkLayerApplied(Fill("a", 0.5)), Is.False);
+        });
+    }
+
+    [Test]
+    public void MarkLayerApplied_ChangedPaintOrVisibility_IsApplied()
+    {
+        var tracker = new StyleObjectTracker();
+        tracker.MarkLayerApplied(Fill("a", 0.5));
+
+        var hidden = Fill("a", 0.5);
+        hidden.Visibility = MapboxMaui.Visibility.None;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(tracker.MarkLayerApplied(Fill("a", 0.6)), Is.True);
+            Assert.That(tracker.MarkLayerApplied(hidden), Is.True);
+        });
+    }
+
+    [Test]
+    public void MarkLayerApplied_ChangedFilterExpression_IsApplied()
+    {
+        var tracker = new StyleObjectTracker();
+        var first = Fill("a", 0.5);
+        first.Filter = MapboxMaui.Expressions.DslExpression.Eq("type", "x");
+        tracker.MarkLayerApplied(first);
+
+        var second = Fill("a", 0.5);
+        second.Filter = MapboxMaui.Expressions.DslExpression.Eq("type", "y");
+
+        Assert.That(tracker.MarkLayerApplied(second), Is.True);
+    }
+
+    [Test]
+    public void MarkLayerApplied_AfterResetOrLayerDropped_IsAppliedAgain()
+    {
+        var tracker = new StyleObjectTracker();
+        tracker.ReplaceLayers([Fill("a", 0.5)]);
+        tracker.MarkLayerApplied(Fill("a", 0.5));
+
+        tracker.Reset();
+        var afterReset = tracker.MarkLayerApplied(Fill("a", 0.5));
+
+        tracker.ReplaceLayers([Fill("a", 0.5)]);
+        tracker.ReplaceLayers([]);
+        var afterDrop = tracker.MarkLayerApplied(Fill("a", 0.5));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(afterReset, Is.True);
+            Assert.That(afterDrop, Is.True);
+        });
+    }
+
+    private static FillLayer Fill(string id, double opacity) => new(id, "s1")
+    {
+        FillOpacity = new MapboxMaui.PropertyValue<double>(opacity),
+        Visibility = MapboxMaui.Visibility.Visible,
+    };
 }

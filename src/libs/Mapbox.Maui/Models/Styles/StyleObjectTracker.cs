@@ -8,6 +8,19 @@ internal sealed class StyleObjectTracker
     private readonly Dictionary<string, string> layerSources = new();
     private readonly HashSet<string> sourceIds = new();
     private readonly Dictionary<string, object> sourceData = new();
+    private readonly Dictionary<string, string> layerSignatures = new();
+
+    /// False when <paramref name="layer"/> has exactly the properties last pushed for its id, so the
+    /// per-redraw property write (one native conversion per layer) can be skipped.
+    public bool MarkLayerApplied(MapboxLayer layer)
+    {
+        var signature = StyleValueSignature.Of(layer);
+        if (layerSignatures.TryGetValue(layer.Id, out var applied) && applied == signature) return false;
+
+        layerSignatures[layer.Id] = signature;
+
+        return true;
+    }
 
     /// False when <paramref name="data"/> is the very instance last pushed to <paramref name="sourceId"/>,
     /// so an unchanged GeoJSON payload is not serialized and parsed again on every redraw.
@@ -37,6 +50,10 @@ internal sealed class StyleObjectTracker
         }
 
         var stale = layerSources.Keys.Where(id => !next.ContainsKey(id)).ToList();
+        foreach (var layerId in stale)
+        {
+            layerSignatures.Remove(layerId);
+        }
 
         layerSources.Clear();
         foreach (var pair in next)
@@ -63,6 +80,7 @@ internal sealed class StyleObjectTracker
         foreach (var layerId in staleLayers)
         {
             layerSources.Remove(layerId);
+            layerSignatures.Remove(layerId);
         }
 
         foreach (var sourceId in staleSources)
@@ -82,5 +100,6 @@ internal sealed class StyleObjectTracker
         layerSources.Clear();
         sourceIds.Clear();
         sourceData.Clear();
+        layerSignatures.Clear();
     }
 }

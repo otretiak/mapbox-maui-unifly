@@ -123,10 +123,13 @@ public partial class MapboxViewHandler
 
         foreach (var layer in layers)
         {
+            var exists = style.LayerExistsWithId(layer.Id);
+            if (!handler.styleObjects.MarkLayerApplied(layer) && exists) continue;
+
             var properties = layer.ToPlatformValue();
             var layerPosition = layer.LayerPosition.ToPlatformValue(layer.LayerPosition.Parameter?.Wrap());
 
-            if (style.LayerExistsWithId(layer.Id))
+            if (exists)
             {
                 style.SetLayerPropertiesFor(
                     layer.Id,

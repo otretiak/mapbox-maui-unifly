@@ -73,9 +73,12 @@ public partial class MapboxViewHandler
 
         foreach (var layer in view.Layers)
         {
+            var exists = mapView.MapboxMap.Style.StyleLayerExists(layer.Id);
+            if (!handler.styleObjects.MarkLayerApplied(layer) && exists) continue;
+
             var value = layer.ToPlatformValue(true);
 
-            if (mapView.MapboxMap.Style.StyleLayerExists(layer.Id))
+            if (exists)
             {
                 mapView.MapboxMap.Style.SetStyleLayerProperties(layer.Id, value);
 
@@ -243,6 +246,9 @@ public partial class MapboxViewHandler
         var cameraOptions = view.CameraOptions.ToNative();
 
         mapView.MapboxMap.SetCamera(cameraOptions);
+
+        // The first style load replaces the camera with the style's default one; re-applied in HandleStyleLoaded.
+        handler.cameraBeforeStyleLoaded = mapView.MapboxMap.Style is null ? cameraOptions : null;
     }
 
     private static void HandleDebugOptionsChanged(MapboxViewHandler handler, IMapboxView view)
@@ -290,6 +296,8 @@ public partial class MapboxViewHandler
 
         return string.IsNullOrWhiteSpace(styleUri) ? MapboxMapsStyle.MapboxStreets : styleUri;
     }
+
+    private Com.Mapbox.Maps.CameraOptions cameraBeforeStyleLoaded;
 
     public MapView NativeMapView => mapboxFragment?.MapView;
 

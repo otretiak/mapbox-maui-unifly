@@ -83,6 +83,12 @@ public partial class MapboxViewHandler
         => (VirtualView as MapboxView)?.InvokeMapLongTapped(point);
     private void HandleStyleLoaded(MapView view)
     {
+        if (cameraBeforeStyleLoaded is { } camera)
+        {
+            cameraBeforeStyleLoaded = null;
+            view.MapboxMap.SetCamera(camera);
+        }
+
         styleObjects.Reset();
         (VirtualView as MapboxView)?.InvokeStyleLoaded();
     }
