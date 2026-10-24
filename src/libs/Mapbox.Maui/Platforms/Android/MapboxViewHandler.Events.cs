@@ -78,7 +78,7 @@ public partial class MapboxViewHandler
     private void HandleMapLoaded(MapView view)
         => (VirtualView as MapboxView)?.InvokeMapLoaded();
     private void HandleMapLoadingError(MapView view)
-        => (VirtualView as MapboxView)?.InvokeMapReady();
+        => (VirtualView as MapboxView)?.InvokeMapLoadingError();
     private void HandleMapLongClicked(MapTappedPosition point)
         => (VirtualView as MapboxView)?.InvokeMapLongTapped(point);
     private void HandleStyleLoaded(MapView view)

@@ -78,6 +78,7 @@ partial class MapboxViewHandler : ICameraPlugin
 
         public void OnAnimationCancel(Animator animation)
         {
+            completion(new AnimationState(AnimatingPosition.Current));
         }
 
         public void OnAnimationEnd(Animator animation)

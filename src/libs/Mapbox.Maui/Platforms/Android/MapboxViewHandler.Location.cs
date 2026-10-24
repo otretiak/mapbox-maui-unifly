@@ -16,22 +16,22 @@ public partial class MapboxViewHandler : Locations.ILocationComponentPlugin
     public bool Enabled
     {
         get => GetPlugin()?.Enabled ?? false;
-        set => GetPlugin().Enabled = value;
+        set => GetPlugin()?.Enabled = value;
 	}
 
 	public bool PulsingEnabled
 	{
 		get => GetPlugin()?.PulsingEnabled ?? false;
-		set => GetPlugin().PulsingEnabled = value;
+		set => GetPlugin()?.PulsingEnabled = value;
 	}
     public bool ShowAccuracyRing
 	{
 		get => GetPlugin()?.ShowAccuracyRing ?? false;
-		set => GetPlugin().ShowAccuracyRing = value;
+		set => GetPlugin()?.ShowAccuracyRing = value;
 	}
 	public float PulsingMaxRadius
 	{
 		get => GetPlugin()?.PulsingMaxRadius ?? 0;
-		set => GetPlugin().PulsingMaxRadius = value;
+		set => GetPlugin()?.PulsingMaxRadius = value;
 	}
 }

@@ -154,14 +154,20 @@ public partial class MapboxFragment : Fragment
             }
             cancelables.Clear();
 
-            GesturesUtils.RemoveOnMapClickListener(MapView.MapboxMap, this);
-            GesturesUtils.RemoveOnMapLongClickListener(MapView.MapboxMap, this);
-            GesturesUtils.RemoveOnRotateListener(MapView.MapboxMap, this);
+            if (MapView?.MapboxMap != null)
+            {
+                GesturesUtils.RemoveOnMapClickListener(MapView.MapboxMap, this);
+                GesturesUtils.RemoveOnMapLongClickListener(MapView.MapboxMap, this);
+                GesturesUtils.RemoveOnRotateListener(MapView.MapboxMap, this);
+            }
 
-            var locationUtils = LocationComponentUtils.GetLocationComponent(MapView);
-            locationUtils.RemoveOnIndicatorAccuracyRadiusChangedListener(this);
-            locationUtils.RemoveOnIndicatorBearingChangedListener(this);
-            locationUtils.RemoveOnIndicatorPositionChangedListener(this);
+            if (MapView != null)
+            {
+                var locationUtils = LocationComponentUtils.GetLocationComponent(MapView);
+                locationUtils.RemoveOnIndicatorAccuracyRadiusChangedListener(this);
+                locationUtils.RemoveOnIndicatorBearingChangedListener(this);
+                locationUtils.RemoveOnIndicatorPositionChangedListener(this);
+            }
 
             MapView?.Dispose();
         }

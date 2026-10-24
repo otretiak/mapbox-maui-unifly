@@ -327,9 +327,12 @@ static class AdditionalExtensions
             DebugOption.ParseStatus => MapDebugOptions.ParseStatus,
             DebugOption.Timestamps => MapDebugOptions.Timestamps,
             DebugOption.Collision => MapDebugOptions.Collision,
+            DebugOption.Overdraw => MapDebugOptions.Overdraw,
             DebugOption.StencilClip => MapDebugOptions.StencilClip,
             DebugOption.DepthBuffer => MapDebugOptions.DepthBuffer,
-            _ => MapDebugOptions.ModelBounds,
+            DebugOption.ModelBounds => MapDebugOptions.ModelBounds,
+            DebugOption.TerrainWireframe => MapDebugOptions.TerrainWireframe,
+            _ => null,
         };
     }
 
@@ -337,6 +340,7 @@ static class AdditionalExtensions
     {
         return options
             .Select(x => x.ToNative())
+            .Where(x => x != null)
             .ToList();
     }
 
@@ -423,10 +427,10 @@ static class AdditionalExtensions
 
     public static Thickness ToX(this EdgeInsets x)
         => new(
-        x.Top,
         x.Left,
-        x.Bottom,
-        x.Right
+        x.Top,
+        x.Right,
+        x.Bottom
     );
 
     public static Java.Lang.Double ToNative(this double x)
