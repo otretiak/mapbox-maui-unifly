@@ -18,12 +18,13 @@
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.4</SupportedOSPlatformVersion>
     <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">26.0</SupportedOSPlatformVersion>
     <RootNamespace>MapboxMaui</RootNamespace>
+    <MauiVersion>10.0.71</MauiVersion>
+    <MapboxMauiVersion>11.23.0-unifly.1</MapboxMauiVersion>
+    <MapboxAndroidBindingsVersion>11.23.0.2</MapboxAndroidBindingsVersion>
+    <MapboxIosBindingsVersion>11.23.0.2</MapboxIosBindingsVersion>
     <SkipValidateMauiImplicitPackageReferences>true</SkipValidateMauiImplicitPackageReferences>
   </PropertyGroup>
 
-  <PropertyGroup Condition="$(TargetFramework.Contains('-ios'))">
-    <RuntimeIdentifier>ios-arm64</RuntimeIdentifier>
-  </PropertyGroup>
 
   <!-- Android -->
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -50,23 +51,23 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <AndroidTargetSdkVersion>34</AndroidTargetSdkVersion>
+    <AndroidTargetSdkVersion>36</AndroidTargetSdkVersion>
     <AndroidSdkDirectory Condition=" '$(OS)' == 'Unix' ">$(Home)/Library/Android/sdk</AndroidSdkDirectory>
     <AndroidSdkDirectory Condition=" '$(OS)' != 'Unix' ">$(UserProfile)/AppData/Local/Android/sdk</AndroidSdkDirectory>
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageId>Mapbox.Maui</PackageId>
+    <PackageId>Unifly.Mapbox.Maui</PackageId>
     <Title>Mapbox SDK for .NET MAUI</Title>
     <Summary>.NET MAUI control and APIs for Mapbox</Summary>
     <Description>.NET MAUI control and APIs for Mapbox</Description>
-    <Authors>tuyen,tuyen-vuduc</Authors>
+    <Authors>tuyen,tuyen-vuduc,unifly</Authors>
     <Owners>tuyen,tuyen-vuduc</Owners>
     <Copyright>© tuyen-vuduc. All rights reserved.</Copyright>
-    <RepositoryUrl>https://github.com/tuyen-vuduc/mapbox-maui</RepositoryUrl>
+    <RepositoryUrl>https://github.com/otretiak/mapbox-maui-unifly</RepositoryUrl>
     <PackageProjectUrl>https://mapbox.tuyen-vuduc.tech</PackageProjectUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageVersion>11.15.2-ndk27</PackageVersion>
+    <PackageVersion>$(MapboxMauiVersion)</PackageVersion>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageIcon>tv-mapbox.png</PackageIcon>
@@ -85,20 +86,19 @@
           Pack="True"
           PackagePath="README.md" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug"
-                      Version="9.0.0" />
+                      Version="10.0.8" />
     <PackageReference Include="Xamarin.Build.Download"
                       Version="0.11.4" />
     <PackageReference Include="GeoJSON.Text"
                       Version="1.1.0" />
     <PackageReference Include="Microsoft.Maui.Controls"
-                      Version="10.0.70" />
+                      Version="$(MauiVersion)" />
     <PackageReference Update="Microsoft.Maui.Controls.Compatibility"
-                      Version="10.0.70" />
+                      Version="$(MauiVersion)" />
   </ItemGroup>
   <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
-    <PackageReference Include="MapboxMapsObjC.iOS" Version="11.8.0.0" />
-    <PackageReference Include="Bindings.Mapbox.iOS" Version="11.23.0.2" />
-    <!--    <PackageReference Include="MapboxMaps.iOS" Version="11.8.0" />-->
+    <PackageReference Include="Bindings.Mapbox.iOS" Version="$(MapboxIosBindingsVersion)" />
+    <PackageReference Include="Bindings.Mapbox.iOS.MapsObjC" Version="$(MapboxIosBindingsVersion)" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\Gestures\" />
@@ -120,7 +120,7 @@
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net10.0-android'">
     <PackageReference Include="Square.OkIO" Version="3.4.0" />
-    <PackageReference Include="Bindings.Mapbox.Maps.AndroidNdk27" Version="11.23.0.2" />
+    <PackageReference Include="Bindings.Mapbox.Maps.AndroidNdk27" Version="$(MapboxAndroidBindingsVersion)" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
