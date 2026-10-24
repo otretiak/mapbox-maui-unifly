@@ -23,6 +23,8 @@ partial class MapboxViewHandler : ILocationComponentPlugin
         get => Plugin.Options.PuckType is not null;
         set
         {
+            if (Plugin is null) return;
+
             var options = Plugin.Options;
             if (!value)
             {
@@ -59,7 +61,7 @@ partial class MapboxViewHandler : ILocationComponentPlugin
         }
         set
         {
-            if (Plugin.Options.PuckType is null) return;
+            if (Plugin?.Options.PuckType is null) return;
 
             try
             {
@@ -112,7 +114,7 @@ partial class MapboxViewHandler : ILocationComponentPlugin
         }
         set
         {
-            if (Plugin.Options.PuckType is null) return;
+            if (Plugin?.Options.PuckType is null) return;
 
             try
             {
@@ -157,7 +159,7 @@ partial class MapboxViewHandler : ILocationComponentPlugin
         }
         set
         {
-            if (Plugin.Options.PuckType is null) return;
+            if (Plugin?.Options.PuckType is null) return;
 
             try
             {

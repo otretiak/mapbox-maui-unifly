@@ -155,7 +155,7 @@ public static partial class AdditionalExtensions
     {
         var result = new TMBTerrain(xvalue.SourceId);
 
-        switch (xvalue.Exaggeration.Value)
+        switch (xvalue.Exaggeration?.Value)
         {
             case DslExpression expression:
                 result.Exaggeration = TMBValue.FromExpression(expression.ToPlatformValue());
@@ -313,7 +313,7 @@ public static partial class AdditionalExtensions
             : mapboxStyle.Value;
     }
 
-    public static MBMMapDebugOptions ToNative(this DebugOption option)
+    public static MBMMapDebugOptions? ToNative(this DebugOption option)
     {
         return option switch
         {
@@ -321,9 +321,12 @@ public static partial class AdditionalExtensions
             DebugOption.ParseStatus => MBMMapDebugOptions.ParseStatus,
             DebugOption.Timestamps => MBMMapDebugOptions.Timestamps,
             DebugOption.Collision => MBMMapDebugOptions.Collision,
+            DebugOption.Overdraw => MBMMapDebugOptions.Overdraw,
             DebugOption.StencilClip => MBMMapDebugOptions.StencilClip,
             DebugOption.DepthBuffer => MBMMapDebugOptions.DepthBuffer,
-            _ => MBMMapDebugOptions.ModelBounds,
+            DebugOption.ModelBounds => MBMMapDebugOptions.ModelBounds,
+            DebugOption.TerrainWireframe => MBMMapDebugOptions.TerrainWireframe,
+            _ => null,
         };
     }
 
@@ -331,6 +334,8 @@ public static partial class AdditionalExtensions
     {
         return options
             .Select(x => x.ToNative())
+            .Where(x => x.HasValue)
+            .Select(x => x.Value)
             .ToList();
     }
 

@@ -335,12 +335,7 @@ public partial class MapboxViewHandler
             if (error is not null)
             {
                 System.Diagnostics.Debug.WriteLine(error.LocalizedDescription);
-                return;
             }
-
-            if (handler.VirtualView is not MapboxView mapboxView) return;
-
-            mapboxView.InvokeStyleLoaded();
         });
     }
 

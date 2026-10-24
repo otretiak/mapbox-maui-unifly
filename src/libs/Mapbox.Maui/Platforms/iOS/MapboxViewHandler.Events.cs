@@ -127,7 +127,7 @@ partial class MapboxViewHandler
         var mapboxView = VirtualView as MapboxView;
         if (mapboxView is null) return;
 
-        mapboxView.InvokeIndicatorAccuracyRadiusChanged(heading.Accuracy);
+        mapboxView.InvokeIndicatorBearingChanged(heading.Direction);
     }
 
     private void HandleLocationChanged(NSArray<MBXLocation> array)
