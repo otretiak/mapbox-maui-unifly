@@ -101,6 +101,9 @@
     <PackageReference Include="Bindings.Mapbox.iOS.MapsObjC" Version="$(MapboxIosBindingsVersion)" />
   </ItemGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="Mapbox.Maui.Tests" />
+  </ItemGroup>
+  <ItemGroup>
     <Folder Include="Models\Gestures\" />
   </ItemGroup>
   <ItemGroup>
