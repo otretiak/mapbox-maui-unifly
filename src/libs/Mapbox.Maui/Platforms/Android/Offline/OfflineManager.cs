@@ -47,10 +47,10 @@ public partial class OfflineManager: Java.Lang.Object
         Action<TileRegion, Exception> completionHandler
     )
     {
-        var tilesetDescriptors = xoptions.TilesetDescriptors
+        var tilesetDescriptors = xoptions.TilesetDescriptors?
             .Select(
                 x => nativeManager.CreateTilesetDescriptor(x.ToNative()))
-            .ToList();
+            .ToList() ?? [];
 
         var options = new Com.Mapbox.Common.TileRegionLoadOptions.Builder()
             .ExtraOptions(xoptions.ExtraOptions?.Wrap())
@@ -89,18 +89,16 @@ public partial class OfflineManager: Java.Lang.Object
 
     class TileRegionLoadProgressCallback : Java.Lang.Object, ITileRegionLoadProgressCallback
     {
-        private WeakReference<Action<TileRegionLoadProgress>> progressHandlerRef;
+        private Action<TileRegionLoadProgress> progressHandler;
 
         public TileRegionLoadProgressCallback(Action<TileRegionLoadProgress> progressHandler)
         {
-            progressHandlerRef = new WeakReference<Action<TileRegionLoadProgress>>(progressHandler);
+            this.progressHandler = progressHandler;
         }
 
         public void Run(Com.Mapbox.Common.TileRegionLoadProgress progress)
         {
-            if (true != progressHandlerRef?.TryGetTarget(out var target)) return;
-
-            target?.Invoke(new TileRegionLoadProgress
+            progressHandler?.Invoke(new TileRegionLoadProgress
             {
                 CompletedResourceCount = (ulong)progress.CompletedResourceCount,
                 CompletedResourceSize = (ulong)progress.CompletedResourceSize,
@@ -117,24 +115,22 @@ public partial class OfflineManager: Java.Lang.Object
 
             if (disposing)
             {
-                progressHandlerRef = null;
+                progressHandler = null;
             }
         }
     }
 
     class TileRegionCallback : Java.Lang.Object, ITileRegionCallback
     {
-        private WeakReference<Action<TileRegion, Exception>> completionHandlerRef;
+        private Action<TileRegion, Exception> completionHandler;
 
         public TileRegionCallback(Action<TileRegion, Exception> completionHandler)
         {
-            this.completionHandlerRef = new WeakReference<Action<TileRegion, Exception>>(completionHandler);
+            this.completionHandler = completionHandler;
         }
 
         public void Run(Expected expected)
         {
-            if (true != this.completionHandlerRef?.TryGetTarget(out var completionHandler)) return;
-
             var xstylePack = expected.IsValue
                 && expected.Value is Com.Mapbox.Common.TileRegion tileRegion
                 ? new TileRegion
@@ -149,7 +145,7 @@ public partial class OfflineManager: Java.Lang.Object
                 }
                 : null;
             var xerror = expected.IsError
-                ? new StylePackCallBackException((StylePackError)expected.Error)
+                ? new TileRegionCallBackException((TileRegionError)expected.Error)
                 : null;
 
             completionHandler?.Invoke(xstylePack, xerror);
@@ -161,25 +157,23 @@ public partial class OfflineManager: Java.Lang.Object
 
             if (disposing)
             {
-                completionHandlerRef = null;
+                completionHandler = null;
             }
         }
     }
 
     class StylePackLoadProgressCallback : Java.Lang.Object, IStylePackLoadProgressCallback
     {
-        private WeakReference<Action<StylePackLoadProgress>> progressHandlerRef;
+        private Action<StylePackLoadProgress> progressHandler;
 
         public StylePackLoadProgressCallback(Action<StylePackLoadProgress> progressHandler)
         {
-            progressHandlerRef = new WeakReference<Action<StylePackLoadProgress>>(progressHandler);
+            this.progressHandler = progressHandler;
         }
 
         public void Run(Com.Mapbox.Maps.StylePackLoadProgress progress)
         {
-            if (true != progressHandlerRef?.TryGetTarget(out var target)) return;
-
-            target?.Invoke(new StylePackLoadProgress
+            progressHandler?.Invoke(new StylePackLoadProgress
             {
                 CompletedResourceCount = (ulong)progress.CompletedResourceCount,
                 CompletedResourceSize = (ulong)progress.CompletedResourceSize,
@@ -196,24 +190,22 @@ public partial class OfflineManager: Java.Lang.Object
 
             if (disposing)
             {
-                progressHandlerRef = null;
+                progressHandler = null;
             }
         }
     }
 
     class StylePackCallback : Java.Lang.Object, IStylePackCallback
     {
-        private WeakReference<Action<StylePack, Exception>> completionHandlerRef;
+        private Action<StylePack, Exception> completionHandler;
 
         public StylePackCallback(Action<StylePack, Exception> completionHandler)
         {
-            completionHandlerRef = new WeakReference<Action<StylePack, Exception>>(completionHandler);
+            this.completionHandler = completionHandler;
         }
 
         public void Run(Expected expected)
         {
-            if (true != this.completionHandlerRef?.TryGetTarget(out var completionHandler)) return;
-
             var xstylePack = expected.IsValue
                 && expected.Value is Com.Mapbox.Maps.StylePack stylePack
                 ? new StylePack
@@ -241,7 +233,7 @@ public partial class OfflineManager: Java.Lang.Object
 
             if (disposing)
             {
-                completionHandlerRef = null;
+                completionHandler = null;
             }
         }
 
@@ -263,6 +255,16 @@ public partial class OfflineManager: Java.Lang.Object
             };
         }
 
+    }
+
+    class TileRegionCallBackException : Exception
+    {
+        private readonly TileRegionError error;
+
+        public TileRegionCallBackException(TileRegionError error)
+        {
+            this.error = error;
+        }
     }
 
     class StylePackCallBackException : Exception
