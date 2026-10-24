@@ -11,7 +11,7 @@ partial class MapboxViewHandler : IAnnotationController
         LayerPosition layerPosition
         )
     {
-        var mapView = PlatformView?.MapView;
+        var mapView = this.GetMapView();
 
         if (mapView == null) return null;
 
@@ -27,7 +27,7 @@ partial class MapboxViewHandler : IAnnotationController
         LayerPosition layerPosition
         )
     {
-        var mapView = PlatformView?.MapView;
+        var mapView = this.GetMapView();
 
         if (mapView == null) return null;
 
@@ -43,7 +43,7 @@ partial class MapboxViewHandler : IAnnotationController
         LayerPosition layerPosition,
         ClusterOptions clusterOptions = null)
     {
-        var mapView = PlatformView?.MapView;
+        var mapView = this.GetMapView();
 
         if (mapView == null) return null;
 
@@ -73,7 +73,7 @@ partial class MapboxViewHandler : IAnnotationController
 
     public IPolylineAnnotationManager CreatePolylineAnnotationManager(string id, LayerPosition layerPosition)
     {
-        var mapView = PlatformView?.MapView;
+        var mapView = this.GetMapView();
 
         if (mapView == null) return null;
 

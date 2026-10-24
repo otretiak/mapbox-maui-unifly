@@ -160,6 +160,9 @@ static class AdditionalExtensions
         return result;
     }
 
+    internal static string BelowLayerId(this Styles.LayerPosition xvalue)
+        => xvalue.Enum == LayerPositionEnum.Below ? xvalue.Parameter as string : null;
+
     internal static Com.Mapbox.Maps.LayerPosition ToPlatformValue(this Styles.LayerPosition xvalue)
     {
         return xvalue.Enum switch
@@ -168,7 +171,7 @@ static class AdditionalExtensions
                 xvalue.Parameter as string, null, null
             ),
             LayerPositionEnum.At => new Com.Mapbox.Maps.LayerPosition(
-                null, null, new Java.Lang.Integer((int)xvalue.Parameter)
+                null, null, new Java.Lang.Integer(Convert.ToInt32(xvalue.Parameter))
             ),
             LayerPositionEnum.Below => new Com.Mapbox.Maps.LayerPosition(
                 null, xvalue.Parameter as string, null
@@ -314,16 +317,7 @@ static class AdditionalExtensions
     }
 
     internal static MapView GetMapView(this MapboxViewHandler handler)
-    {
-        var mainActivity = (MauiAppCompatActivity)handler.Context.GetActivity();
-        var fragmentManager = mainActivity.SupportFragmentManager;
-        
-        //Commented to avoid an issue with classic MAUI navigation, when we open page B and come back to page A with a mapbox
-        // var fragmentManager = handler.MauiContext.Services.GetService<FragmentManager>();
-        var tag = $"mapbox-maui-{handler.PlatformView.Id}";
-        var fragnent = fragmentManager.FindFragmentByTag(tag);
-        return (fragnent as MapboxFragment)?.MapView;
-    }
+        => handler.NativeMapView;
 
     public static MapDebugOptions ToNative(this DebugOption option)
     {

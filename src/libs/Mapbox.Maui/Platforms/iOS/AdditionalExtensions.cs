@@ -15,6 +15,9 @@ using UIKit;
 
 public static partial class AdditionalExtensions
 {
+    internal static MapboxMaps.MapView GetMapView(this MapboxViewHandler handler)
+        => handler.NativeMapView;
+
     internal static UIEdgeInsets ToNative(this Thickness x)
     {
         return new UIEdgeInsets(

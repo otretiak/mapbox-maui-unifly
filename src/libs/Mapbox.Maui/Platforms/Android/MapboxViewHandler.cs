@@ -64,6 +64,12 @@ public partial class MapboxViewHandler
         if (mapView is null) return;
 
         if (view.Layers == null) return;
+        if (mapView.MapboxMap.Style is null) return;
+
+        foreach (var staleLayerId in handler.styleObjects.ReplaceLayers(view.Layers))
+        {
+            RemoveStyleLayer(mapView.MapboxMap.Style, staleLayerId);
+        }
 
         foreach (var layer in view.Layers)
         {
@@ -128,10 +134,41 @@ public partial class MapboxViewHandler
 
         if (view.Sources == null) return;
         var style = mapView.MapboxMap.Style;
+        if (style is null) return;
+
+        var (staleLayerIds, staleSourceIds) = handler.styleObjects.ReplaceSources(view.Sources);
+        foreach (var staleLayerId in staleLayerIds)
+        {
+            RemoveStyleLayer(style, staleLayerId);
+        }
+        foreach (var staleSourceId in staleSourceIds)
+        {
+            if (!style.StyleSourceExists(staleSourceId)) continue;
+
+            var removeResult = style.RemoveStyleSource(staleSourceId);
+            if (removeResult.IsError)
+            {
+                System.Diagnostics.Debug.WriteLine(removeResult.Error);
+            }
+        }
 
         foreach (var source in view.Sources)
         {
             var sourceExists = style.StyleSourceExists(source.Id);
+
+            if (source is Styles.GeoJSONSource geojsonSource)
+            {
+                // Only the data of an existing GeoJSON source changes: its other properties are
+                // immutable natively, and re-setting "data" here would parse the payload twice.
+                if (!sourceExists)
+                {
+                    style.AddStyleSource(source.Id, source.ToPlatformValue());
+                }
+
+                HandleGeoJSONSourceChanged(style, source.Id, geojsonSource.Data);
+                continue;
+            }
+
             var platformValue = source.ToPlatformValue();
 
             if (sourceExists)
@@ -141,12 +178,6 @@ public partial class MapboxViewHandler
             else
             {
                 style.AddStyleSource(source.Id, platformValue);
-            }
-
-            if (source is Styles.GeoJSONSource geojsonSource)
-            {
-                HandleGeoJSONSourceChanged(style, source.Id, geojsonSource.Data);
-                continue;
             }
 
             if (!source.VolatileProperties.Any()) continue;
@@ -160,6 +191,17 @@ public partial class MapboxViewHandler
             {
                 System.Diagnostics.Debug.WriteLine(setStyleSourcePropertiesResult.Error);
             }
+        }
+    }
+
+    private static void RemoveStyleLayer(MapboxMapsStyle style, string layerId)
+    {
+        if (!style.StyleLayerExists(layerId)) return;
+
+        var removeResult = style.RemoveStyleLayer(layerId);
+        if (removeResult.IsError)
+        {
+            System.Diagnostics.Debug.WriteLine(removeResult.Error);
         }
     }
 
@@ -230,6 +272,10 @@ public partial class MapboxViewHandler
 
         handler.GetMapView()?.MapboxMap.LoadStyle(styleUri);
     }
+
+    public MapView NativeMapView => mapboxFragment?.MapView;
+
+    public MapboxMap NativeMap => NativeMapView?.MapboxMap;
 
     protected override PlatformView CreatePlatformView()
     {

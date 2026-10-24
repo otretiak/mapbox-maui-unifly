@@ -9,7 +9,7 @@ partial class MapboxViewHandler : IViewAnnotationController
 {
     public void AddViewAnnotation(ViewAnnotationOptions options, Microsoft.Maui.Controls.ContentView contentView = default)
     {
-        var mapView = PlatformView.MapView;
+        var mapView = this.GetMapView();
 
         if (mapView == null) return;
 
@@ -36,7 +36,7 @@ partial class MapboxViewHandler : IViewAnnotationController
 
     public void RemoveAllViewAnnotations()
     {
-        var mapView = PlatformView.MapView;
+        var mapView = this.GetMapView();
 
         if (mapView == null) return;
 

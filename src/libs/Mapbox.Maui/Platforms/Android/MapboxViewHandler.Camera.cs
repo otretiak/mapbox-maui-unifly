@@ -58,6 +58,15 @@ partial class MapboxViewHandler : ICameraPlugin
             : null);
     }
 
+    public void CancelAnimations()
+    {
+        var mapView = mapboxFragment?.MapView;
+
+        if (mapView is null) return;
+
+        CameraAnimationsUtils.GetCamera(mapView).CancelAllAnimators(null);
+    }
+
     private class XAnimationListener : Java.Lang.Object, Android.Animation.Animator.IAnimatorListener
     {
         private Action<AnimationState> completion;

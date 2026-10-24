@@ -14,6 +14,8 @@ public partial class MapboxViewHandler : ViewHandler<IMapboxView, PlatformView>
 {
     internal static string ACCESS_TOKEN;
 
+    private readonly Styles.StyleObjectTracker styleObjects = new();
+
     public static IPropertyMapper<IMapboxView, MapboxViewHandler> Mapper
         = new PropertyMapper<IMapboxView, MapboxViewHandler>(ViewHandler.ViewMapper)
         {

@@ -8,7 +8,7 @@ partial class MapboxViewHandler : IMapboxController
 {
     public CoordinateBounds GetCoordinateBoundsForCamera(CameraOptions cameraOptions)
     {
-		var mapView = PlatformView.MapView;
+		var mapView = this.GetMapView();
 
 		if (mapView == null) return null;
 
@@ -24,7 +24,7 @@ partial class MapboxViewHandler : IMapboxController
 
     public IPosition GetMapPosition(ScreenPosition position)
     {
-        var mapView = PlatformView.MapView;
+        var mapView = this.GetMapView();
 
         if (mapView == null) return null;
 
@@ -37,7 +37,7 @@ partial class MapboxViewHandler : IMapboxController
 
     public ScreenPosition GetScreenPosition(IPosition position)
     {
-        var mapView = PlatformView.MapView;
+        var mapView = this.GetMapView();
 
         if (mapView == null) return default;
 
@@ -52,7 +52,7 @@ partial class MapboxViewHandler : IMapboxController
         double? maxZoom = null,
         ScreenPosition? offset = null)
     {
-        var mapView = PlatformView.MapView;
+        var mapView = this.GetMapView();
 
         if (mapView == null) return default;
 
@@ -79,7 +79,7 @@ partial class MapboxViewHandler : IMapboxController
         ScreenPosition? offset = null)
     {
 
-        var mapView = PlatformView.MapView;
+        var mapView = this.GetMapView();
 
         if (mapView == null)
         {
@@ -103,7 +103,7 @@ partial class MapboxViewHandler : IMapboxController
         string sourceId, string propertyName,
         T value, Action<Exception> completion = null)
     {
-        var mapView = PlatformView.MapView;
+        var mapView = this.GetMapView();
 
         if (mapView == null)
         {
@@ -129,7 +129,7 @@ partial class MapboxViewHandler : IMapboxController
         string layerId, string propertyName,
         T value, Action<Exception> completion = null)
     {
-        var mapView = PlatformView.MapView;
+        var mapView = this.GetMapView();
 
         if (mapView == null)
         {

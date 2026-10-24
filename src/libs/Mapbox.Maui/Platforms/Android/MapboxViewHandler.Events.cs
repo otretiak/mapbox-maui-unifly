@@ -82,7 +82,10 @@ public partial class MapboxViewHandler
     private void HandleMapLongClicked(MapTappedPosition point)
         => (VirtualView as MapboxView)?.InvokeMapLongTapped(point);
     private void HandleStyleLoaded(MapView view)
-        => (VirtualView as MapboxView)?.InvokeStyleLoaded();
+    {
+        styleObjects.Reset();
+        (VirtualView as MapboxView)?.InvokeStyleLoaded();
+    }
     private void HandleViewportStatusChanged(Viewport.ViewportStatusChangedEventArgs args)
         => (VirtualView as MapboxView)?.InvokeViewportStatusChanged(args);
     private void HandleRotatingBegan(RotatingBeganEventArgs args)

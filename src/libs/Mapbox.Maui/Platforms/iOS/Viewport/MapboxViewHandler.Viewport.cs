@@ -9,7 +9,7 @@ partial class MapboxViewHandler : X.IViewportPlugin
     {
         get
         {
-            var mapView = PlatformView.MapView;
+            var mapView = this.GetMapView();
 
             if (mapView == null) return default;
 
@@ -17,7 +17,7 @@ partial class MapboxViewHandler : X.IViewportPlugin
         }
         set
         {
-            var mapView = PlatformView.MapView;
+            var mapView = this.GetMapView();
 
             if (mapView == null) return;
 
@@ -27,7 +27,7 @@ partial class MapboxViewHandler : X.IViewportPlugin
 
     public X.IViewportState GetCurrentOrNextState()
     {
-        var mapView = PlatformView.MapView;
+        var mapView = this.GetMapView();
 
         if (mapView == null) return default;
 
@@ -36,7 +36,7 @@ partial class MapboxViewHandler : X.IViewportPlugin
 
     public X.IFollowPuckViewportState MakeFollowPuckViewportState(X.FollowPuckViewportStateOptions options)
     {
-        var mapView = PlatformView.MapView;
+        var mapView = this.GetMapView();
 
         if (mapView == null) return default;
 
@@ -47,7 +47,7 @@ partial class MapboxViewHandler : X.IViewportPlugin
 
     public X.IOverviewViewportState MakeOverviewViewportState(X.OverviewViewportStateOptions options)
     {
-        var mapView = PlatformView.MapView;
+        var mapView = this.GetMapView();
 
         if (mapView == null) return default;
 
@@ -61,7 +61,7 @@ partial class MapboxViewHandler : X.IViewportPlugin
         X.IViewportTransition transition = null,
         Action<bool> completion = null)
     {
-        var mapView = PlatformView.MapView;
+        var mapView = this.GetMapView();
 
         if (mapView == null) return;
 

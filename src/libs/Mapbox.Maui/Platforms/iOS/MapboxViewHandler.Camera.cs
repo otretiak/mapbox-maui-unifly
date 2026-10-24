@@ -1,4 +1,5 @@
-﻿using MapboxMapsObjC;
+﻿using Foundation;
+using MapboxMapsObjC;
 using MapboxMaui.Camera;
 using UIKit;
 
@@ -10,7 +11,7 @@ partial class MapboxViewHandler : ICameraPlugin
     {
         get
         {
-            var mapView = PlatformView.MapView;
+            var mapView = this.GetMapView();
 
             if (mapView == null) return default;
 
@@ -20,7 +21,7 @@ partial class MapboxViewHandler : ICameraPlugin
 
     public void EaseTo(CameraOptions cameraOptions, AnimationOptions animationOptions = default, Action<AnimationState> completion = default)
     {
-        var mapView = PlatformView.MapView;
+        var mapView = this.GetMapView();
 
         if (mapView == null) return;
 
@@ -35,9 +36,9 @@ partial class MapboxViewHandler : ICameraPlugin
                 _ => UIViewAnimationCurve.EaseOut,
             }
             : UIViewAnimationCurve.EaseOut;
-        mapView.Camera().FlyTo(
+        mapView.Camera().EaseTo(
             xcameraOptions,
-            animationOptions?.Duration / 1000L ?? 0,
+            (animationOptions?.Duration ?? 0) / 1000d,
             curve,
             (position) =>
             {
@@ -54,7 +55,7 @@ partial class MapboxViewHandler : ICameraPlugin
     }
     public void FlyTo(CameraOptions cameraOptions, AnimationOptions animationOptions = default, Action<AnimationState> completion = default)
     {
-        var mapView = PlatformView.MapView;
+        var mapView = this.GetMapView();
 
         if (mapView == null) return;
 
@@ -71,7 +72,7 @@ partial class MapboxViewHandler : ICameraPlugin
             : UIViewAnimationCurve.EaseOut;
         mapView.Camera().FlyTo(
             xcameraOptions,
-            animationOptions?.Duration / 1000L ?? 0,
+            animationOptions?.Duration is { } duration ? NSNumber.FromDouble(duration / 1000d) : null,
             curve,
             (position) =>
             {
@@ -85,5 +86,10 @@ partial class MapboxViewHandler : ICameraPlugin
 
                 completion?.Invoke(new AnimationState(xposition));
             });
+    }
+
+    public void CancelAnimations()
+    {
+        this.GetMapView()?.Camera().CancelAnimations();
     }
 }

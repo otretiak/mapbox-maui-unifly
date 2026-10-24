@@ -11,9 +11,15 @@ using MapboxMaui.Styles;
 
 public partial class MapboxViewHandler
 {
+    public MapboxMaps.MapView NativeMapView => ((IElementHandler)this).PlatformView is MapViewContainer container
+        ? container.MapView
+        : null;
+
+    public TMBMapboxMap NativeMap => NativeMapView?.MapboxMap();
+
     private static void HandleGestureSettingsChanged(MapboxViewHandler handler, IMapboxView view)
     {
-        var mapView = handler.PlatformView.MapView;
+        var mapView = handler.GetMapView();
         if (mapView == null) return;
 
         var gestureOptions = new TMBGestureOptions(
@@ -39,7 +45,7 @@ public partial class MapboxViewHandler
 
     private static void HandleLightChanged(MapboxViewHandler handler, IMapboxView view)
     {
-        var mapView = handler.PlatformView.MapView;
+        var mapView = handler.GetMapView();
         if (mapView == null) return;
 
         var light = view.Light;
@@ -62,7 +68,7 @@ public partial class MapboxViewHandler
 
     private static void HandleImagesChanged(MapboxViewHandler handler, IMapboxView view)
     {
-        var mapView = handler.PlatformView.MapView;
+        var mapView = handler.GetMapView();
         if (mapView == null) return;
 
         var images = view.Images;
@@ -102,13 +108,18 @@ public partial class MapboxViewHandler
 
     private static void HandleLayersChanged(MapboxViewHandler handler, IMapboxView view)
     {
-        var mapView = handler.PlatformView.MapView;
+        var mapView = handler.GetMapView();
         if (mapView == null) return;
 
         var layers = view.Layers;
         if (layers == null) return;
 
         var style = mapView.MapboxMap();
+
+        foreach (var staleLayerId in handler.styleObjects.ReplaceLayers(layers))
+        {
+            RemoveLayer(style, staleLayerId);
+        }
 
         foreach (var layer in layers)
         {
@@ -145,7 +156,7 @@ public partial class MapboxViewHandler
 
     private static void HandleTerrainChanged(MapboxViewHandler handler, IMapboxView view)
     {
-        var mapView = handler.PlatformView.MapView;
+        var mapView = handler.GetMapView();
         if (mapView == null) return;
 
         var terrain = view.Terrain;
@@ -158,13 +169,25 @@ public partial class MapboxViewHandler
 
     private static void HandleSourcesChanged(MapboxViewHandler handler, IMapboxView view)
     {
-        var mapView = handler.PlatformView.MapView;
+        var mapView = handler.GetMapView();
         if (mapView == null) return;
 
         var sources = view.Sources;
         if (sources == null) return;
 
         var style = mapView.MapboxMap();
+
+        var (staleLayerIds, staleSourceIds) = handler.styleObjects.ReplaceSources(sources);
+        foreach (var staleLayerId in staleLayerIds)
+        {
+            RemoveLayer(style, staleLayerId);
+        }
+        foreach (var staleSourceId in staleSourceIds)
+        {
+            if (!style.SourceExistsWithId(staleSourceId)) continue;
+
+            style.RemoveSourceWithId(staleSourceId, LogError);
+        }
 
         foreach (var source in sources)
         {
@@ -200,6 +223,20 @@ public partial class MapboxViewHandler
                     System.Diagnostics.Debug.WriteLine(error.LocalizedDescription);
                 });
         }
+    }
+
+    private static void RemoveLayer(TMBMapboxMap style, string layerId)
+    {
+        if (!style.LayerExistsWithId(layerId)) return;
+
+        style.RemoveLayerWithId(layerId, LogError);
+    }
+
+    private static void LogError(NSError error)
+    {
+        if (error == null) return;
+
+        System.Diagnostics.Debug.WriteLine(error.LocalizedDescription);
     }
 
     private static void HandleGeoJSONSource(TMBMapboxMap style, string sourceId, NSDictionary<NSString, NSObject> platformValue, GeoJSON.Text.IGeoJSONObject data)
@@ -247,7 +284,7 @@ public partial class MapboxViewHandler
 
     private static void HandleCameraOptionsChanged(MapboxViewHandler handler, IMapboxView view)
     {
-        var mapView = handler.PlatformView.MapView;
+        var mapView = handler.GetMapView();
         if (mapView == null) return;
 
         var cameraOptions = view.CameraOptions.ToNative();
@@ -260,7 +297,7 @@ public partial class MapboxViewHandler
     {
         if (view.DebugOptions == null) return;
 
-        var mapView = handler.PlatformView.MapView;
+        var mapView = handler.GetMapView();
         if (mapView == null) return;
 
         var debugOptions = view.DebugOptions.ToNative();
@@ -274,7 +311,7 @@ public partial class MapboxViewHandler
 
     private static void HandleScaleBarVisibilityChanged(MapboxViewHandler handler, IMapboxView view)
     {
-        var mapView = handler.PlatformView.MapView;
+        var mapView = handler.GetMapView();
         if (mapView == null) return;
 
         var options = mapView.Ornaments().Options;
@@ -285,7 +322,7 @@ public partial class MapboxViewHandler
 
     private static void HandleMapboxStyleChanged(MapboxViewHandler handler, IMapboxView view)
     {
-        var mapView = handler.PlatformView.MapView;
+        var mapView = handler.GetMapView();
         if (mapView == null) return;
 
         var styleUri = view.MapboxStyle.ToNative();

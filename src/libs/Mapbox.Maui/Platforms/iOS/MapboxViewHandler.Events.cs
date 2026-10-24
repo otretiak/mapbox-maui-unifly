@@ -51,6 +51,7 @@ partial class MapboxViewHandler
             }),
             mapboxMap.OnStyleLoaded(_ =>
             {
+                styleObjects.Reset();
                 mapboxView?.InvokeStyleLoaded();
             })
         );
@@ -166,7 +167,7 @@ partial class MapboxViewHandler
 
     private MapTappedPosition GetPositionForGesture(UIGestureRecognizer gesture)
     {
-        var mapView = PlatformView.MapView;
+        var mapView = this.GetMapView();
         if (mapView == null) return null;
 
         var screenPosition = gesture.LocationInView(mapView);
