@@ -338,7 +338,12 @@ public partial class MapboxViewHandler
             if (error is not null)
             {
                 System.Diagnostics.Debug.WriteLine(error.LocalizedDescription);
+                return;
             }
+
+            // Loading the URI that is already loaded completes without a new style-loaded event.
+            handler.styleObjects.Reset();
+            (handler.VirtualView as MapboxView)?.InvokeStyleLoaded();
         });
     }
 
