@@ -242,9 +242,10 @@ public partial class MapboxViewHandler
         if (mapView is null)
         {
             // The fragment has not created its MapView yet; it reads its initial camera from the arguments.
-            handler.mapboxFragment?.Arguments?.PutParcelable(
-                nameof(CameraOptions),
-                new CameraOptionsParcelable(view.CameraOptions));
+            if (handler.mapboxFragment?.Arguments is { } arguments)
+            {
+                CameraOptionsBundle.Put(arguments, view.CameraOptions);
+            }
             return;
         }
 
@@ -321,9 +322,7 @@ public partial class MapboxViewHandler
         isFirstStyleLoaded = false;
         cameraBeforeStyleLoaded = null;
         var args = new Bundle();
-        args.PutParcelable(
-            nameof(CameraOptions),
-            new CameraOptionsParcelable(VirtualView.CameraOptions));
+        CameraOptionsBundle.Put(args, VirtualView.CameraOptions);
         args.PutString(nameof(MapboxView.MapboxStyle), ToStyleUri(VirtualView.MapboxStyle));
         mapboxFragment.Arguments = args;
 

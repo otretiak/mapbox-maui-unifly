@@ -60,9 +60,7 @@ public partial class MapboxFragment : Fragment
             MapboxOptions.AccessToken = MapboxViewHandler.ACCESS_TOKEN;
         }
 
-        var cameraOptionsParcelable = Arguments?
-            .GetParcelable(nameof(IMapboxView.CameraOptions))
-            as CameraOptionsParcelable;
+        var cameraOptions = CameraOptionsBundle.Get(Arguments);
         var styleUri = Arguments?
             .GetString(nameof(IMapboxView.MapboxStyle));
 
@@ -72,7 +70,7 @@ public partial class MapboxFragment : Fragment
             Context,
             MapInitOptions.CompanionField.GetDefaultMapOptions(Context),
             MapInitOptions.CompanionField.DefaultPluginList,
-            cameraOptionsParcelable?.CameraOptions.ToNative(),
+            cameraOptions?.ToNative(),
             false,
             string.IsNullOrWhiteSpace(styleUri) ? Com.Mapbox.Maps.Style.Standard : styleUri);
 
